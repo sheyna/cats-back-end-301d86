@@ -43,6 +43,7 @@ app.post('/cats', postCats);
 // we will use a variable to capture that id
 // to create that variabble we add ':<variable-name>' in place of the path value
 app.delete('/cats/:id', deleteCats);
+app.put('/cats/:id', putCats);
 
 async function getCats(req, res, next) {
   try {
@@ -69,6 +70,24 @@ async function deleteCats(req, res, next) {
   try {
     await Cat.findByIdAndDelete(id)
     res.status(200).send('cat deleted');
+  } catch(error) {
+    next(error);
+  }
+}
+
+async function putCats(req, res, next) {
+  let id = req.params.id;
+  try {
+    // updated data lives in the body of the request:
+    let data = req.body;
+
+    // findByIdAndUpdate method takes in 3 arguments
+    // 1. id of the thing to update
+    // 2. updated data object
+    // 3. options object 
+    let updatedCat = await Cat.findByIdAndUpdate(id, data, { new: true, overwrite: true });
+    res.status(200).send(updatedCat);
+
   } catch(error) {
     next(error);
   }
